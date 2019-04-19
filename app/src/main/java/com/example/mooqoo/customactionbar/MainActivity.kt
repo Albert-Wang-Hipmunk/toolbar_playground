@@ -8,6 +8,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
 import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -32,10 +34,26 @@ class MainActivity : AppCompatActivity() {
     var toolbarType = ToolbarType.DEFAULT
 
     private val customToolbarContent: View by lazy {
-        layoutInflater.inflate(R.layout.toolbar_title, null)
+        val view = layoutInflater.inflate(R.layout.toolbar_title, null)
+        view.findViewById<TextView>(R.id.tb_title).setOnClickListener {
+            Toast.makeText(this, "title clicked", Toast.LENGTH_SHORT).show()
+        }
+        view
     }
     private val customToolbarContent2: View by lazy {
-        layoutInflater.inflate(R.layout.toolbar_custom, null)
+        val view = layoutInflater.inflate(R.layout.toolbar_custom, null)
+        view.run {
+            findViewById<TextView>(R.id.textView).setOnClickListener {
+                Toast.makeText(this@MainActivity, "left text clicked", Toast.LENGTH_SHORT).show()
+            }
+            findViewById<TextView>(R.id.textView2).setOnClickListener {
+                Toast.makeText(this@MainActivity, "center text clicked", Toast.LENGTH_SHORT).show()
+            }
+            findViewById<TextView>(R.id.textView3).setOnClickListener {
+                Toast.makeText(this@MainActivity, "right text clicked", Toast.LENGTH_SHORT).show()
+            }
+        }
+        view
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
