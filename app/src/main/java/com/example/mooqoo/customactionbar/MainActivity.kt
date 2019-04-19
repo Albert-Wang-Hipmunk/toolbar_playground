@@ -1,16 +1,27 @@
 package com.example.mooqoo.customactionbar
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar
+import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.SHOW_AS_ACTION_ALWAYS
+import android.view.View
 
 import kotlinx.android.synthetic.main.activity_main.*
 
 // TODO create a base activity
 class MainActivity : AppCompatActivity() {
+
+    val TAG = "Toolbar Playground"
+
+    enum class ToolbarType {
+        DEFAULT,
+        TYPE1,
+        TYPE2
+    }
+
     enum class MenuType {
         DEFAULT,
         TYPE1,
@@ -18,13 +29,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     var menuType = MenuType.DEFAULT
+    var toolbarType = ToolbarType.DEFAULT
+
+    private val customToolbarContent: View by lazy {
+        layoutInflater.inflate(R.layout.toolbar_title, null)
+    }
+    private val customToolbarContent2: View by lazy {
+        layoutInflater.inflate(R.layout.toolbar_custom, null)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar_container)
 
-        fab.setOnClickListener { view -> changeToolbarMenu() }
+        setupDefaultToolbar()
+
+        fab.setOnClickListener {
+            Log.d(TAG, "Fab is clicked")
+            changeToolbarMenu()
+            changeCustomToolbar()
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
@@ -58,6 +83,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun onMenuItemPress() {
 
+    }
+
+    private fun setupDefaultToolbar() {
+        toolbar_container.title = "this is title"
+        toolbar_container.subtitle = "this is subtitle"
+        invalidateOptionsMenu()
+    }
+
+    private fun changeCustomToolbar() {
+        toolbar_container.removeAllViews()
+        when(toolbarType) {
+            ToolbarType.DEFAULT -> {
+                toolbarType = ToolbarType.TYPE1
+                toolbar_container.addView(customToolbarContent)
+            }
+            ToolbarType.TYPE1 -> {
+                toolbarType = ToolbarType.TYPE2
+                supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+                val params = ActionBar.LayoutParams(
+                    ActionBar.LayoutParams.MATCH_PARENT,
+                    ActionBar.LayoutParams.MATCH_PARENT
+                )
+                supportActionBar?.setCustomView(customToolbarContent2, params)
+            }
+            ToolbarType.TYPE2 -> {
+                toolbarType = ToolbarType.DEFAULT
+                setupDefaultToolbar()
+            }
+        }
     }
 
     private fun changeToolbarMenu() {
